@@ -15,8 +15,9 @@ class UserController
 
 	public function indexAction()
 	{
-		$sql = "SELECT * FROM gene";
+		$sql = "SELECT * FROM genes";
 		$gene = $this->app['db']->fetchAssoc($sql);
+		$this->app['monolog']->addDebug(print_r($gene,true));
 		return new JsonResponse($gene);
 	}
 }

@@ -8,3 +8,5 @@ $app['db.options'] = array(
     'user'     => 'root',
     'password' => '',
 );
+
+$app['db.dsn'] = "mysql:dbname={$app['db.options']['dbname']};host={$app['db.options']['host']}";
