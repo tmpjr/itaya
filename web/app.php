@@ -44,10 +44,9 @@ $app->register(new Silex\Provider\MonologServiceProvider(), array(
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 
 $app['user.controller'] = $app->share(function() use ($app) {
-    return new Itaya\UserController($app);
+    return new Itaya\UserController();
 });
-
-$app->get('/user', "user.controller:indexAction");
+$app->get('/user/{id}', "user.controller:indexAction");
 
 
 $app->run();
