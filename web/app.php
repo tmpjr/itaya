@@ -10,20 +10,37 @@ require __DIR__ . '/../resources/config/dev.php';
 $app->register(new Silex\Provider\DoctrineServiceProvider(), $app['db.options']);
 
 // Configure Sentry
-$app['sentry'] = $app->share(function() use ($app) {
-    $hasher = new Cartalyst\Sentry\Hashing\NativeHasher;
-    $userProvider = new Cartalyst\Sentry\Users\Eloquent\Provider($hasher);
-    $groupProvider = new Cartalyst\Sentry\Groups\Eloquent\Provider;
-    $throttleProvider = new Cartalyst\Sentry\Throttling\Eloquent\Provider($userProvider);
-    $session = new Cartalyst\Sentry\Sessions\NativeSession;
-    $cookie = new Cartalyst\Sentry\Cookies\NativeCookie(array());
+$app['sentry.hasher'] = $app->share(function() use ($app){
+    return new Cartalyst\Sentry\Hashing\NativeHasher;
+});
 
+$app['sentry.provider.user'] = $app->share(function() use ($app){
+    return new Cartalyst\Sentry\Users\Eloquent\Provider($app['sentry.hasher']);
+});
+
+$app['sentry.provider.group'] = $app->share(function() use ($app){
+    return new Cartalyst\Sentry\Groups\Eloquent\Provider;
+});
+
+$app['sentry.provider.throttle'] = $app->share(function() use ($app){
+    return new Cartalyst\Sentry\Throttling\Eloquent\Provider($app['sentry.provider.user']);
+});
+
+$app['sentry.session'] = $app->share(function() use ($app){
+    return new Cartalyst\Sentry\Sessions\NativeSession;
+});
+
+$app['sentry.cookie'] = $app->share(function() use ($app){
+    return new Cartalyst\Sentry\Cookies\NativeCookie(array());
+});
+
+$app['sentry'] = $app->share(function() use ($app) {
     $sentry = new Cartalyst\Sentry\Sentry(
-        $userProvider,
-        $groupProvider,
-        $throttleProvider,
-        $session,
-        $cookie
+        $app['sentry.provider.user'],
+        $app['sentry.provider.group'],
+        $app['sentry.provider.throttle'],
+        $app['sentry.session'],
+        $app['sentry.cookie']
     );
 
     Cartalyst\Sentry\Facades\Native\Sentry::setupDatabaseResolver(new PDO(
@@ -46,7 +63,8 @@ $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 $app['user.controller'] = $app->share(function() use ($app) {
     return new Itaya\UserController();
 });
-$app->get('/user/{id}', "user.controller:indexAction");
+//$app->get('/user/{id}', "user.controller:createAction");
+$app->post('/user/create', "user.controller:createAction");
 
 
 $app->run();
