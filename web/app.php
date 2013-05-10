@@ -63,7 +63,7 @@ $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 $app['user.controller'] = $app->share(function() use ($app) {
     return new Itaya\UserController();
 });
-//$app->get('/user/{id}', "user.controller:createAction");
+$app->get('/user/{id}', "user.controller:fetchAction");
 $app->post('/user/create', "user.controller:createAction");
 
 
