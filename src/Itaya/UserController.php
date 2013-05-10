@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use InvalidArgumentException;
 //use Cartalyst\Sentry\Users;
+use Cartalyst\Sentry\Users\UserNotFoundException;
 
 class UserController
 {
@@ -42,8 +43,8 @@ class UserController
 
 		try {
 			$user = $app['sentry']->getUserProvider()->findById($id);
-		} catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
-			return new JsonResponse($e);
+		} catch (UserNotFoundException $e) {
+			return $e->getMessage();
 		}
 		
 		return new JsonResponse($user->toArray());
