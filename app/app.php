@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/boostrap.php';
 
 $app = new Silex\Application();
 
@@ -65,9 +65,6 @@ $app['user.controller'] = $app->share(function() use ($app) {
 });
 $app->get('/user/{id}', "user.controller:fetchAction");
 $app->post('/user/create', "user.controller:createAction");
-
-
-$app->run();
 
 // must return $app for unit testing to work
 return $app;
