@@ -8,7 +8,7 @@ class UserControllerTest extends WebTestCase
 {
 	public function createApplication()
 	{
-		require __DIR__ . '/../../web/app.php';	
+		$app = require __DIR__ . '/../../web/app.php';	
 		$app['debug'] = true;
 		$app['exception_handler']->disable();
 		return $app;
