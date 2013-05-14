@@ -8,7 +8,7 @@
          processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="false"
-         bootstrap="web/app.php"
+         bootstrap="app/app.php"
 >
     <testsuites>
         <testsuite name="Itaya Test Suite">
