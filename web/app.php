@@ -68,3 +68,6 @@ $app->post('/user/create', "user.controller:createAction");
 
 
 $app->run();
+
+// must return $app for unit testing to work
+return $app;

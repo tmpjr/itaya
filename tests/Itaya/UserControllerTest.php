@@ -8,17 +8,21 @@ class UserControllerTest extends WebTestCase
 {
 	public function createApplication()
 	{
-		$app = require __DIR__ . '/../../web/app.php';	
+		return require __DIR__ . '/../../web/app.php';	
 		$app['debug'] = true;
     	$app['exception_handler']->disable();
 
     	return $app;
 	}
 	
-	public function testUserFetch()
+	public function testIsUserFetchValidJson()
 	{
 		$client = $this->createClient();
-    	$crawler = $client->request('GET', '/user/1');
-    	$this->assertTrue($client->getResponse()->isOk());
+    	$client->request('GET', '/user/1');	
+    	$response = $client->getResponse();
+
+    	$data = json_decode($response->getContent(), true);
+
+    	$this->assertJson($data);
 	}
 }
