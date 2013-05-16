@@ -33,6 +33,31 @@ class UserController
 		));
 	}
 
+	public function loginAction(Request $request, Application $app)
+	{
+		$username = trim($request->get('username'));
+		$password = $request->get('password');
+		$hash = password_hash($password, PASSWORD_BCRYPT);
+		$status = false;
+
+		$sql = "SELECT * FROM user WHERE username = :user";
+		$stmt = $app['db']->prepare($sql);
+		$stmt->bindValue(':user', $username);
+		$stmt->execute();
+		$user = $stmt->fetch();
+
+		if ($user !== false) {
+			if (password_verify($password, $hash)) {
+				$status = true;
+			}
+		}
+
+		return new JsonResponse(array(
+			'status' => $status,
+			'user' => $user
+		));
+	}
+
 	public function fetchAction(Request $request, Application $app)
 	{
 		$id = intval($request->get('id'));

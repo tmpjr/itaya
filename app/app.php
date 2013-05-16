@@ -22,6 +22,7 @@ $app['user.controller'] = $app->share(function() use ($app) {
 });
 $app->get('/user/{id}', "user.controller:fetchAction");
 $app->post('/user/create', "user.controller:createAction");
+$app->post('/login', "user.controller:loginAction");
 
 // must return $app for unit testing to work
 return $app;
