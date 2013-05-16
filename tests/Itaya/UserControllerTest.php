@@ -19,9 +19,8 @@ class UserControllerTest extends WebTestCase
 	{
 		$client = $this->createClient();
 		$client->request('GET', '/user/2');
-		//$response = $client->getResponse();
-		//$data = json_decode($response->getContent());
-		//$this->assertJson($data);
-		//$this->assertTrue(true, true);
+		$response = $client->getResponse();
+		$data = $response->getContent();
+		$this->assertJson($data);
 	}
 }
