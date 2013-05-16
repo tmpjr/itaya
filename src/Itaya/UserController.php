@@ -6,49 +6,49 @@ use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use InvalidArgumentException;
-use Cartalyst\Sentry\Users\UserNotFoundException;
 
 class UserController
 {
 	public function createAction(Request $request, Application $app)
 	{
-		$email = trim($request->get('email'));
+		$username = trim($request->get('username'));
 		$password = $request->get('password');
+		$activated = intval($request->get('activated'));
 
-		$userProvider = $app['sentry']->getUserProvider();
+		$permissions = json_encode(array('admin' => 1));
+		$hash = password_hash($password, PASSWORD_BCRYPT);
 
-		try {
-			$user = $userProvider->create(array(
-				'email' 	=> $email,
-				'password' 	=> $password
-			));
-		} catch (Cartalyst\Sentry\Users\LoginRequiredException $e) {
-		    return new JsonResponse($e);
-		} catch (Cartalyst\Sentry\Users\PasswordRequiredException $e) {
-		    return new JsonResponse($e);
-		} catch (Cartalyst\Sentry\Users\UserExistsException $e) {
-		    return new JsonResponse($e);
-		} catch (Cartalyst\Sentry\Users\GroupNotFoundException $e) {
-		    return new JsonResponse($e);
-		}
+		$stmt = $app['db']->prepare("INSERT INTO user 
+			(username,pwd_hash,permissions,activated) 
+			VALUES (:username,:pwd_hash,:permissions,:activated)");
+		$stmt->bindValue(':username', $username);
+		$stmt->bindValue(':pwd_hash', $hash);
+		$stmt->bindValue(':permissions', $permissions);
+		$stmt->bindValue(':activated', $activated);
+		$stmt->execute();
 
-		//$app['monolog']->addDebug(print_r($gene,true));
-		return new JsonResponse($user->toArray());
+		return new JsonResponse(array(
+			'success' => true,
+			'user_id' => $app['db']->lastInsertId()
+		));
 	}
 
 	public function fetchAction(Request $request, Application $app)
 	{
 		$id = intval($request->get('id'));
 
-		try {
-			$user = $app['sentry']->getUserProvider()->findById($id);
-		} catch (UserNotFoundException $e) {
-			return new JsonResponse(array('message' => $e->getMessage(), 'status' => 'error'));
-		}
+		//try {
+			$stmt = $app['db']->prepare("SELECT * FROM user WHERE id = :id");
+			$stmt->bindValue(':id', $id);
+			$stmt->execute();
+			$user = $stmt->fetch();
+		//} catch (UserNotFoundException $e) {
+		//	return new JsonResponse(array('message' => $e->getMessage(), 'status' => 'error'));
+		//}
 
 		$response = array(
 			'status' 	=> 'success', 
-			'data' 		=> $user->toArray()
+			'data' 		=> $user
 		);
 		
 		return new JsonResponse($response);		

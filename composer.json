@@ -4,8 +4,6 @@
         "doctrine/dbal": "2.3.3",
         "symfony/browser-kit": "2.3.*@dev",
         "monolog/monolog": ">=1.0.0",
-        "cartalyst/sentry": "2.0.*",
-        "illuminate/database": "4.0.*",
         "ircmaxell/password-compat": "1.0.*"
     },
     "require-dev": {
