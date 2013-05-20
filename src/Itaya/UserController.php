@@ -15,16 +15,50 @@ class UserController
 		$password = $request->get('password');
 		$activated = intval($request->get('activated'));
 
-		$permissions = json_encode(array('admin' => 1));
+		$roles = 'ROLE_ADMIN';
 		$hash = password_hash($password, PASSWORD_BCRYPT);
 
 		$stmt = $app['db']->prepare("INSERT INTO user 
-			(username,pwd_hash,permissions,activated) 
-			VALUES (:username,:pwd_hash,:permissions,:activated)");
+			(username,pwd_hash,roles,activated) 
+			VALUES (:username,:pwd_hash,:roles,:activated)");
 		$stmt->bindValue(':username', $username);
 		$stmt->bindValue(':pwd_hash', $hash);
-		$stmt->bindValue(':permissions', $permissions);
+		$stmt->bindValue(':roles', $roles);
 		$stmt->bindValue(':activated', $activated);
+		$stmt->execute();
+
+		return new JsonResponse(array(
+			'success' => true,
+			'user_id' => $app['db']->lastInsertId()
+		));
+	}
+
+	public function updateAction(Request $request, Application $app)
+	{
+		$id = intval($request->get('id'));
+		$username = trim($request->get('username'));
+		$password = $request->get('password');
+		$activated = intval($request->get('activated'));
+
+		$roles = 'ROLE_ADMIN';
+		$hash = password_hash($password, PASSWORD_BCRYPT);
+
+		$sql = "UPDATE 
+					user 
+				SET 
+					updated_on = NOW(),
+					username = :username,
+					pwd_hash = :pwd_hash, 
+					roles = :roles, 
+					activated = :activated 
+				WHERE 
+					id = :id";
+		$stmt = $app['db']->prepare($sql);
+		$stmt->bindValue(':username', $username);
+		$stmt->bindValue(':pwd_hash', $hash);
+		$stmt->bindValue(':roles', $roles);
+		$stmt->bindValue(':activated', $activated);
+		$stmt->bindValue(':id', $id);
 		$stmt->execute();
 
 		return new JsonResponse(array(

@@ -2,21 +2,73 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Itaya - Login</title>
-
     <link rel="stylesheet" type="text/css" href="ext/resources/css/ext-all-neptune.css">
-
     <script type="text/javascript" src="ext/ext-all-dev.js"></script>
-   
 </head>
-<body>
+<body style="background-color: black;">
 <script type="text/javascript">
     Ext.onReady(function(){
         Ext.create('Ext.window.Window', {
             title: 'Login to Itaya',
-            height: 290,
-            width: 480,
-            layout: 'fit',
-            html: 'login form here...'
+            width: 420,
+            height: 310,
+            closable: false,
+            resizable: false,
+            draggable: true,
+            modal: true,
+            //frame: true,
+            layout: 'border',
+            items: [{
+                region: 'north',
+                height: 120,
+                xtype: 'panel',
+                //frame: false,
+                bodyPadding: 10,    
+                html: 'The Itaya bioinformatics application is open '
+                    + 'source software and is currently under active development. You can view '
+                    + 'the full source code by visiting the Github repository located at '
+                    + '<a href="https://github.com/tmpjr/itaya" target="_blank">https://github.com/tmpjr/itaya</a>.'
+                    + '<p style="float: right">Thank you!<br/><a href="mailto:tploskinajr@gmail.com&Subject=Itaya">Tom Ploskina Jr.</a></p>'
+            },{
+                region: 'center',
+                xtype: 'form',
+                bodyPadding: 10, 
+                //frame: false,
+                defaults: { width: 300 },
+                buttons: [{
+                    text: 'Login',
+                    scale: 'medium',
+                    handler: function() {
+                        var form = this.up('form').getForm();
+                        if (form.isValid()) {
+                            form.submit({
+                                method: 'POST',
+                                standardSubmit: true,
+                                url: '{{ path('login_check') }}'
+                            });
+                        }
+                    }
+                }],
+                items: [{
+                    xtype: 'displayfield',
+                    fieldStyle: 'color: red; font-weight: bold',
+                    value: '{{ error }}&nbsp;'
+                },{
+                    xtype: 'textfield',
+                    id: 'username',
+                    name: 'username',
+                    fieldLabel: 'Username', 
+                    allowBlank: false,
+                    value: '{{ last_username }}'
+                },{
+                    xtype: 'textfield',
+                    id: 'password',
+                    name: 'password',
+                    inputType: 'password',
+                    fieldLabel: 'Password',
+                    allowBlank: false
+                }]
+            }]
         }).show();
     });
 </script>

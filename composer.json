@@ -3,6 +3,8 @@
         "silex/silex": "1.0.*@dev",
         "doctrine/dbal": "2.3.3",
         "symfony/browser-kit": "2.3.*@dev",
+        "symfony/security": "2.4.*@dev",
+        "symfony/twig-bridge": "~2.3",
         "monolog/monolog": ">=1.0.0",
         "ircmaxell/password-compat": "1.0.*",
         "twig/twig": "1.*"
